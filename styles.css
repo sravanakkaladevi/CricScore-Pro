@@ -160,6 +160,27 @@ body > * { position: relative; z-index: 1; }
 }
 .player-input:focus { border-color: rgba(57,255,143,0.3); }
 
+/* ── Impact Toggle ── */
+.impact-toggle-row { display: flex; flex-direction: column; }
+.toggle-btn {
+  padding: 6px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.45);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.toggle-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.toggle-btn.toggle-active {
+  background: rgba(57,255,143,0.18);
+  border-color: rgba(57,255,143,0.45);
+  color: var(--neon);
+  box-shadow: 0 0 12px rgba(57,255,143,0.15);
+}
+
 /* ── Start Button ── */
 .start-btn {
   background: linear-gradient(135deg, rgba(57,255,143,0.25) 0%, rgba(0,230,118,0.15) 100%);

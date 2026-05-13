@@ -76,9 +76,36 @@
               <input id="teamAName" class="form-input" type="text" placeholder="e.g. Mumbai Indians" value="Team A"/>
             </div>
           </div>
-          <h3 class="text-white/50 text-xs uppercase tracking-widest mb-3">Players (11)</h3>
-          <div class="space-y-2" id="teamAPlayers">
+
+          <!-- Player Count Selector -->
+          <div class="flex items-center gap-3 mb-3">
+            <div class="form-group flex-1">
+              <label class="form-label">Number of Players</label>
+              <select id="playerCountA" class="form-input" onchange="buildPlayerInputs('A')">
+                <option value="7">7 Players</option>
+                <option value="8">8 Players</option>
+                <option value="9">9 Players</option>
+                <option value="10">10 Players</option>
+                <option value="11" selected>11 Players</option>
+              </select>
+            </div>
           </div>
+
+          <!-- Impact Player Toggle -->
+          <div class="impact-toggle-row mb-3">
+            <span class="form-label">Impact Player?</span>
+            <div class="flex gap-2 mt-1">
+              <button type="button" id="impactAYes" onclick="setImpact('A','yes')" class="toggle-btn">Yes</button>
+              <button type="button" id="impactANo"  onclick="setImpact('A','no')"  class="toggle-btn toggle-active">No</button>
+            </div>
+          </div>
+          <div id="impactAField" class="form-group mb-3 hidden">
+            <label class="form-label">Impact Player Name</label>
+            <input id="impactAName" class="form-input" type="text" placeholder="Impact player name"/>
+          </div>
+
+          <h3 class="text-white/50 text-xs uppercase tracking-widest mb-3" id="teamAPlayerLabel">Players (11)</h3>
+          <div class="space-y-2" id="teamAPlayers"></div>
         </div>
 
         <!-- Team B -->
@@ -93,9 +120,36 @@
               <input id="teamBName" class="form-input" type="text" placeholder="e.g. Chennai Super Kings" value="Team B"/>
             </div>
           </div>
-          <h3 class="text-white/50 text-xs uppercase tracking-widest mb-3">Players (11)</h3>
-          <div class="space-y-2" id="teamBPlayers">
+
+          <!-- Player Count Selector -->
+          <div class="flex items-center gap-3 mb-3">
+            <div class="form-group flex-1">
+              <label class="form-label">Number of Players</label>
+              <select id="playerCountB" class="form-input" onchange="buildPlayerInputs('B')">
+                <option value="7">7 Players</option>
+                <option value="8">8 Players</option>
+                <option value="9">9 Players</option>
+                <option value="10">10 Players</option>
+                <option value="11" selected>11 Players</option>
+              </select>
+            </div>
           </div>
+
+          <!-- Impact Player Toggle -->
+          <div class="impact-toggle-row mb-3">
+            <span class="form-label">Impact Player?</span>
+            <div class="flex gap-2 mt-1">
+              <button type="button" id="impactBYes" onclick="setImpact('B','yes')" class="toggle-btn">Yes</button>
+              <button type="button" id="impactBNo"  onclick="setImpact('B','no')"  class="toggle-btn toggle-active">No</button>
+            </div>
+          </div>
+          <div id="impactBField" class="form-group mb-3 hidden">
+            <label class="form-label">Impact Player Name</label>
+            <input id="impactBName" class="form-input" type="text" placeholder="Impact player name"/>
+          </div>
+
+          <h3 class="text-white/50 text-xs uppercase tracking-widest mb-3" id="teamBPlayerLabel">Players (11)</h3>
+          <div class="space-y-2" id="teamBPlayers"></div>
         </div>
       </div>
 

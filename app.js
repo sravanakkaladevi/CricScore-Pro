@@ -43,14 +43,28 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function buildPlayerInputs(team) {
+  const countEl = document.getElementById(`playerCount${team}`);
+  const count = countEl ? parseInt(countEl.value) : 11;
   const el = document.getElementById(`team${team}Players`);
+  const label = document.getElementById(`team${team}PlayerLabel`);
+  if (label) label.textContent = `Players (${count})`;
   el.innerHTML = '';
-  for (let i=1; i<=11; i++) {
+  for (let i = 1; i <= count; i++) {
     el.innerHTML += `<div class="player-input-row">
       <div class="player-num">${i}</div>
-      <input class="player-input" id="p${team}${i}" type="text" placeholder="Player ${i} name" value="Player ${i}"/>
+      <input class="player-input" id="p${team}${i}" type="text" placeholder="Player ${i} name"/>
     </div>`;
   }
+}
+
+function setImpact(team, val) {
+  // Toggle active state
+  document.getElementById(`impact${team}Yes`).classList.toggle('toggle-active', val === 'yes');
+  document.getElementById(`impact${team}No`).classList.toggle('toggle-active', val === 'no');
+  // Show/hide name field
+  const field = document.getElementById(`impact${team}Field`);
+  if (val === 'yes') field.classList.remove('hidden');
+  else { field.classList.add('hidden'); document.getElementById(`impact${team}Name`).value = ''; }
 }
 
 // ── Logo upload ────────────────────────
@@ -77,8 +91,17 @@ function startMatch() {
   s.tossWon = document.getElementById('tossWon').value;
   s.tossElect = document.getElementById('tossElect').value;
   s.battingFirst = document.getElementById('battingFirst').value;
-  s.playersA = Array.from({length:11},(_,i) => (document.getElementById(`pA${i+1}`)?.value || `Player ${i+1}`));
-  s.playersB = Array.from({length:11},(_,i) => (document.getElementById(`pB${i+1}`)?.value || `Player ${i+1}`));
+
+  const countA = parseInt(document.getElementById('playerCountA').value);
+  const countB = parseInt(document.getElementById('playerCountB').value);
+  s.playersA = Array.from({length:countA},(_,i) => (document.getElementById(`pA${i+1}`)?.value?.trim() || `Player ${i+1}`));
+  s.playersB = Array.from({length:countB},(_,i) => (document.getElementById(`pB${i+1}`)?.value?.trim() || `Player ${i+1}`));
+
+  // Impact players
+  const impactAOn = document.getElementById('impactAYes').classList.contains('toggle-active');
+  const impactBOn = document.getElementById('impactBYes').classList.contains('toggle-active');
+  s.impactA = impactAOn ? (document.getElementById('impactAName').value.trim() || '') : '';
+  s.impactB = impactBOn ? (document.getElementById('impactBName').value.trim() || '') : '';
 
   M.batting = s.battingFirst;
   M.bowling = s.battingFirst === 'A' ? 'B' : 'A';
