@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CricScore Pro — Live Cricket Scorer</title>
+<script>
+  tailwind={config:{theme:{extend:{colors:{neon:'#39ff8f',neon2:'#00e676',danger:'#ff4757',four:'#3b82f6',six:'#a855f7'},fontFamily:{barlow:['Barlow Condensed','sans-serif'],inter:['Inter','sans-serif']}}}}}
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body class="bg-body font-inter text-white min-h-screen">
+
+<!-- ══════════════════════════════════════
+     SCREEN 1 — MATCH SETUP
+══════════════════════════════════════ -->
+<div id="setupScreen" class="min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="setup-header py-5 px-6 flex items-center gap-3 border-b border-white/10">
+    <div class="w-10 h-10 rounded-xl bg-neon/20 border border-neon/30 flex items-center justify-center">
+      <span class="text-neon text-xl">🏏</span>
+    </div>
+    <div>
+      <h1 class="font-barlow font-bold text-2xl text-white tracking-wide">CricScore Pro</h1>
+      <p class="text-white/40 text-xs">Professional Live Cricket Scorer</p>
+    </div>
+  </header>
+
+  <div class="flex-1 overflow-y-auto px-4 py-6">
+    <div class="max-w-4xl mx-auto space-y-6">
+
+      <!-- Match Info -->
+      <div class="glass-card p-5">
+        <h2 class="section-title">Match Details</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div class="form-group">
+            <label class="form-label">Venue</label>
+            <input id="venue" class="form-input" type="text" placeholder="e.g. Wankhede Stadium"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Overs Format</label>
+            <select id="oversFormat" class="form-input">
+              <option value="2">T2 (2 Overs)</option>
+              <option value="5">T5 (5 Overs)</option>
+              <option value="10">T10 (10 Overs)</option>
+              <option value="20" selected>T20 (20 Overs)</option>
+              <option value="50">ODI (50 Overs)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Umpire 1</label>
+            <input id="umpire1" class="form-input" type="text" placeholder="Umpire name"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Umpire 2</label>
+            <input id="umpire2" class="form-input" type="text" placeholder="Umpire name"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teams -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+        <!-- Team A -->
+        <div class="glass-card p-5 team-card team-a-card">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="team-logo-upload" id="logoA" onclick="document.getElementById('logoAInput').click()">
+              <span class="text-2xl" id="logoAEmoji">🏏</span>
+              <input type="file" id="logoAInput" accept="image/*" class="hidden" onchange="loadLogo('A',this)"/>
+            </div>
+            <div class="flex-1">
+              <label class="form-label">Team A Name</label>
+              <input id="teamAName" class="form-input" type="text" placeholder="e.g. Mumbai Indians" value="Team A"/>
+            </div>
+          </div>
+          <h3 class="text-white/50 text-xs uppercase tracking-widest mb-3">Players (11)</h3>
+          <div class="space-y-2" id="teamAPlayers">
+          </div>
+        </div>
+
+        <!-- Team B -->
+        <div class="glass-card p-5 team-card team-b-card">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="team-logo-upload team-b-logo" id="logoB" onclick="document.getElementById('logoBInput').click()">
+              <span class="text-2xl" id="logoBEmoji">⚡</span>
+              <input type="file" id="logoBInput" accept="image/*" class="hidden" onchange="loadLogo('B',this)"/>
+            </div>
+            <div class="flex-1">
+              <label class="form-label">Team B Name</label>
+              <input id="teamBName" class="form-input" type="text" placeholder="e.g. Chennai Super Kings" value="Team B"/>
+            </div>
+          </div>
+          <h3 class="text-white/50 text-xs uppercase tracking-widest mb-3">Players (11)</h3>
+          <div class="space-y-2" id="teamBPlayers">
+          </div>
+        </div>
+      </div>
+
+      <!-- Toss -->
+      <div class="glass-card p-5">
+        <h2 class="section-title">Toss & Batting Order</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div class="form-group">
+            <label class="form-label">Toss Won By</label>
+            <select id="tossWon" class="form-input">
+              <option value="A">Team A</option>
+              <option value="B">Team B</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Elected To</label>
+            <select id="tossElect" class="form-input">
+              <option value="bat">Bat</option>
+              <option value="bowl">Bowl</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Team Batting First</label>
+            <select id="battingFirst" class="form-input">
+              <option value="A">Team A</option>
+              <option value="B">Team B</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Start Button -->
+      <button id="startMatchBtn" onclick="startMatch()" class="start-btn w-full py-4 rounded-2xl font-barlow font-bold text-xl tracking-widest uppercase">
+        🏏 Start Match
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 2 — LIVE SCORING
+══════════════════════════════════════ -->
+<div id="scoringScreen" class="hidden min-h-screen flex flex-col">
+
+  <!-- Top Scoreboard Bar -->
+  <div class="score-topbar px-4 py-3">
+    <div class="max-w-6xl mx-auto flex items-center gap-3 flex-wrap">
+
+      <div class="flex items-center gap-2">
+        <span class="live-dot"></span>
+        <span class="text-neon font-bold text-xs tracking-widest">LIVE</span>
+      </div>
+
+      <div class="flex-1 flex items-center justify-center gap-4 flex-wrap">
+        <!-- Batting team score -->
+        <div class="flex items-center gap-3">
+          <span class="font-barlow font-black text-3xl" id="liveTeamName">CSK</span>
+          <div class="score-badge">
+            <span class="font-barlow font-black text-4xl" id="liveScore">0-0</span>
+          </div>
+          <span class="text-white/50 font-barlow text-lg" id="liveOvers">(0.0)</span>
+        </div>
+
+        <!-- vs -->
+        <div class="text-white/30 font-barlow text-sm">vs</div>
+
+        <!-- Target / Opposition -->
+        <div class="text-center">
+          <div class="text-white/60 font-barlow text-lg" id="liveOpponent">MI</div>
+          <div class="text-neon text-xs font-semibold" id="targetDisplay"></div>
+        </div>
+      </div>
+
+      <!-- Rates -->
+      <div class="flex gap-3">
+        <div class="rate-chip">
+          <span class="text-white/40 text-xs">CRR</span>
+          <span class="font-barlow font-bold text-sm" id="crrDisplay">0.00</span>
+        </div>
+        <div class="rate-chip">
+          <span class="text-white/40 text-xs">RRR</span>
+          <span class="font-barlow font-bold text-sm text-neon" id="rrrDisplay">—</span>
+        </div>
+      </div>
+
+      <!-- Exit -->
+      <button onclick="confirmExit()" class="exit-btn px-3 py-1.5 rounded-xl text-xs font-semibold">Exit</button>
+    </div>
+
+    <!-- Match status -->
+    <div class="text-center mt-1">
+      <span class="text-white/50 text-xs" id="matchStatusBar">Innings 1 in progress</span>
+    </div>
+  </div>
+
+  <!-- Main Scoring Area -->
+  <div class="flex-1 overflow-y-auto px-3 py-4">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+      <!-- LEFT: Batsmen + Bowler -->
+      <div class="space-y-4">
+
+        <!-- Batsmen Panel -->
+        <div class="glass-card p-4">
+          <h3 class="panel-title">Batsmen</h3>
+          <table class="w-full mt-3 text-sm">
+            <thead>
+              <tr class="text-white/30 text-xs uppercase tracking-wide">
+                <th class="text-left pb-2">Batsman</th>
+                <th class="pb-2">R</th>
+                <th class="pb-2">B</th>
+                <th class="pb-2">4s</th>
+                <th class="pb-2">6s</th>
+                <th class="pb-2">SR</th>
+              </tr>
+            </thead>
+            <tbody id="batsmenTable">
+            </tbody>
+          </table>
+          <div class="mt-3 pt-3 border-t border-white/10 flex justify-between text-xs">
+            <span class="text-white/40">Partnership:</span>
+            <span class="text-neon font-semibold" id="partnershipDisplay">0(0)</span>
+          </div>
+        </div>
+
+        <!-- Bowler Panel -->
+        <div class="glass-card p-4">
+          <h3 class="panel-title">Current Bowler</h3>
+          <div class="mt-3" id="bowlerPanel">
+            <div class="flex justify-between items-center mb-3">
+              <span class="font-semibold text-white" id="bowlerName">—</span>
+              <button onclick="changeBowler()" class="text-neon text-xs border border-neon/30 px-2 py-1 rounded-lg hover:bg-neon/10 transition">Change</button>
+            </div>
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div class="stat-box"><div class="stat-val" id="bowlerOvers">0.0</div><div class="stat-lbl">Overs</div></div>
+              <div class="stat-box"><div class="stat-val" id="bowlerRuns">0</div><div class="stat-lbl">Runs</div></div>
+              <div class="stat-box"><div class="stat-val text-danger" id="bowlerWkts">0</div><div class="stat-lbl">Wkts</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Over History -->
+        <div class="glass-card p-4">
+          <h3 class="panel-title">This Over</h3>
+          <div class="flex gap-1.5 mt-3 flex-wrap" id="currentOverBalls"></div>
+          <div class="mt-3 pt-3 border-t border-white/10">
+            <h4 class="text-white/30 text-xs uppercase tracking-wide mb-2">Over History</h4>
+            <div class="space-y-1 max-h-32 overflow-y-auto" id="overHistory"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CENTER: Ball Controls -->
+      <div class="space-y-4">
+
+        <!-- Run buttons -->
+        <div class="glass-card p-4">
+          <h3 class="panel-title mb-3">Score Ball</h3>
+          <div class="grid grid-cols-3 gap-3">
+            <button class="ball-btn dot-btn" onclick="scoreBall(0)">0</button>
+            <button class="ball-btn run-btn" onclick="scoreBall(1)">1</button>
+            <button class="ball-btn run-btn" onclick="scoreBall(2)">2</button>
+            <button class="ball-btn run-btn" onclick="scoreBall(3)">3</button>
+            <button class="ball-btn four-btn" onclick="scoreBall(4)">4</button>
+            <button class="ball-btn six-btn" onclick="scoreBall(6)">6</button>
+          </div>
+        </div>
+
+        <!-- Extras buttons -->
+        <div class="glass-card p-4">
+          <h3 class="panel-title mb-3">Extras</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <button class="ball-btn extra-btn" onclick="scoreExtra('wide')">Wide</button>
+            <button class="ball-btn extra-btn" onclick="scoreExtra('noball')">No Ball</button>
+            <button class="ball-btn extra-btn" onclick="scoreExtra('bye')">Bye</button>
+            <button class="ball-btn extra-btn" onclick="scoreExtra('legbye')">Leg Bye</button>
+          </div>
+        </div>
+
+        <!-- Wicket / RunOut -->
+        <div class="glass-card p-4">
+          <h3 class="panel-title mb-3">Dismissal</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <button class="ball-btn wicket-btn" onclick="openWicketModal()">🔴 Wicket</button>
+            <button class="ball-btn runout-btn" onclick="openRunOutModal()">🏃 Run Out</button>
+          </div>
+        </div>
+
+        <!-- Undo + Stats -->
+        <div class="glass-card p-4">
+          <button onclick="undoLastBall()" class="undo-btn w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
+            ↩ Undo Last Ball
+          </button>
+          <div class="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+            <div class="stat-box"><div class="stat-val text-white/60" id="dotPct">0%</div><div class="stat-lbl">Dots</div></div>
+            <div class="stat-box"><div class="stat-val text-four" id="boundaryCount">0</div><div class="stat-lbl">4s+6s</div></div>
+            <div class="stat-box"><div class="stat-val text-neon" id="extrasTotal">0</div><div class="stat-lbl">Extras</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Commentary -->
+      <div class="space-y-4">
+
+        <!-- Ball-by-ball commentary -->
+        <div class="glass-card p-4 h-full">
+          <h3 class="panel-title mb-3">Live Commentary</h3>
+          <div class="space-y-2 max-h-96 overflow-y-auto" id="commentaryFeed"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODALS
+══════════════════════════════════════ -->
+
+<!-- Wicket Modal -->
+<div id="wicketModal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h2 class="modal-title">🔴 Wicket!</h2>
+    <div class="space-y-4 mt-4">
+      <div class="form-group">
+        <label class="form-label">Wicket Type</label>
+        <select id="wicketType" class="form-input" onchange="onWicketTypeChange()">
+          <option value="bowled">Bowled</option>
+          <option value="caught">Caught</option>
+          <option value="lbw">LBW</option>
+          <option value="stumped">Stumped</option>
+          <option value="hitwicket">Hit Wicket</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Batsman Out</label>
+        <select id="batterOut" class="form-input"></select>
+      </div>
+      <div class="form-group" id="catcherGroup" style="display:none">
+        <label class="form-label">Caught By</label>
+        <select id="catcherName" class="form-input"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Runs Scored on this ball</label>
+        <select id="wicketRuns" class="form-input">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Next Batsman</label>
+        <select id="nextBatsman" class="form-input"></select>
+      </div>
+    </div>
+    <div class="flex gap-3 mt-5">
+      <button onclick="closeWicketModal()" class="flex-1 py-3 rounded-xl border border-white/20 text-white/60 font-semibold text-sm hover:bg-white/5 transition">Cancel</button>
+      <button onclick="confirmWicket()" class="flex-1 py-3 rounded-xl bg-danger/20 border border-danger/40 text-danger font-semibold text-sm hover:bg-danger/30 transition">Confirm Wicket</button>
+    </div>
+  </div>
+</div>
+
+<!-- Run Out Modal -->
+<div id="runOutModal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h2 class="modal-title">🏃 Run Out</h2>
+    <div class="space-y-4 mt-4">
+      <div class="form-group">
+        <label class="form-label">Batsman Run Out</label>
+        <select id="runOutBatter" class="form-input"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Completed Runs</label>
+        <select id="runOutRuns" class="form-input">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Next Batsman</label>
+        <select id="runOutNext" class="form-input"></select>
+      </div>
+    </div>
+    <div class="flex gap-3 mt-5">
+      <button onclick="closeRunOutModal()" class="flex-1 py-3 rounded-xl border border-white/20 text-white/60 font-semibold text-sm hover:bg-white/5 transition">Cancel</button>
+      <button onclick="confirmRunOut()" class="flex-1 py-3 rounded-xl bg-danger/20 border border-danger/40 text-danger font-semibold text-sm hover:bg-danger/30 transition">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bowler Change Modal -->
+<div id="bowlerModal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h2 class="modal-title">🎳 Select Bowler</h2>
+    <p class="text-white/40 text-sm mt-1">Over complete — choose next bowler</p>
+    <div class="space-y-2 mt-4 max-h-64 overflow-y-auto" id="bowlerList"></div>
+    <div class="flex gap-3 mt-5">
+      <button onclick="closeBowlerModal()" class="flex-1 py-3 rounded-xl border border-white/20 text-white/60 font-semibold text-sm hover:bg-white/5 transition">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Exit Confirm Modal -->
+<div id="exitModal" class="modal-overlay hidden">
+  <div class="modal-card text-center">
+    <div class="text-4xl mb-3">⚠️</div>
+    <h2 class="modal-title">End Match?</h2>
+    <p class="text-white/50 text-sm mt-2">This will clear all match data and return to setup.</p>
+    <div class="flex gap-3 mt-5">
+      <button onclick="closeExitModal()" class="flex-1 py-3 rounded-xl border border-white/20 text-white/60 font-semibold text-sm hover:bg-white/5 transition">Cancel</button>
+      <button onclick="resetMatch()" class="flex-1 py-3 rounded-xl bg-danger/20 border border-danger/40 text-danger font-semibold text-sm hover:bg-danger/30 transition">Yes, End Match</button>
+    </div>
+  </div>
+</div>
+
+<!-- Innings Break Modal -->
+<div id="inningsModal" class="modal-overlay hidden">
+  <div class="modal-card text-center">
+    <div class="text-4xl mb-3">🔄</div>
+    <h2 class="modal-title">Innings Break</h2>
+    <div class="mt-3 space-y-1" id="inningsSummary"></div>
+    <p class="text-white/50 text-sm mt-4" id="inningsTarget"></p>
+    <div class="flex gap-3 mt-5">
+      <button onclick="startSecondInnings()" class="flex-1 py-3 rounded-xl bg-neon/20 border border-neon/30 text-neon font-semibold text-sm hover:bg-neon/30 transition">Start 2nd Innings</button>
+    </div>
+  </div>
+</div>
+
+<!-- Match Complete Modal -->
+<div id="matchCompleteModal" class="modal-overlay hidden">
+  <div class="modal-card text-center">
+    <div class="text-5xl mb-3" id="matchResultEmoji">🏆</div>
+    <h2 class="modal-title" id="matchResultTitle">Match Complete</h2>
+    <p class="text-white/60 text-sm mt-2" id="matchResultDesc"></p>
+    <div class="mt-4 p-4 rounded-xl bg-white/5 text-left space-y-2 text-sm" id="matchSummaryStats"></div>
+    <div class="flex gap-3 mt-5">
+      <button onclick="resetMatch()" class="flex-1 py-3 rounded-xl bg-neon/20 border border-neon/30 text-neon font-semibold text-sm hover:bg-neon/30 transition">New Match</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
