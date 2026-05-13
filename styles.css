@@ -175,6 +175,7 @@ body > * { position: relative; z-index: 1; }
   text-align: center;
   outline: none;
   transition: border-color 0.2s;
+  appearance: none;
   -moz-appearance: textfield;
 }
 .jersey-input::-webkit-inner-spin-button,

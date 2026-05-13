@@ -54,7 +54,10 @@ window.addEventListener('DOMContentLoaded', () => {
 */
 function buildPlayerInputs(team, sync = true) {
   const countEl = document.getElementById(`playerCount${team}`);
-  const count   = countEl ? parseInt(countEl.value) : 11;
+  let count     = countEl ? parseInt(countEl.value) : 11;
+
+  if (isNaN(count) || count < 1) return; // Don't rebuild if invalid
+  if (count > 30) count = 30; // Safety limit
 
   // Sync the other team's selector to the same count
   if (sync) {

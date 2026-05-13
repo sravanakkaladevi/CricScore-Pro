@@ -77,17 +77,11 @@
             </div>
           </div>
 
-          <!-- Player Count Selector -->
+          <!-- Player Count Input -->
           <div class="flex items-center gap-3 mb-3">
             <div class="form-group flex-1">
               <label class="form-label">Number of Players</label>
-              <select id="playerCountA" class="form-input" onchange="buildPlayerInputs('A')">
-                <option value="7">7 Players</option>
-                <option value="8">8 Players</option>
-                <option value="9">9 Players</option>
-                <option value="10">10 Players</option>
-                <option value="11" selected>11 Players</option>
-              </select>
+              <input id="playerCountA" class="form-input" type="number" min="1" max="20" value="11" oninput="buildPlayerInputs('A')"/>
             </div>
           </div>
 
@@ -121,17 +115,11 @@
             </div>
           </div>
 
-          <!-- Player Count Selector -->
+          <!-- Player Count Input -->
           <div class="flex items-center gap-3 mb-3">
             <div class="form-group flex-1">
               <label class="form-label">Number of Players</label>
-              <select id="playerCountB" class="form-input" onchange="buildPlayerInputs('B')">
-                <option value="7">7 Players</option>
-                <option value="8">8 Players</option>
-                <option value="9">9 Players</option>
-                <option value="10">10 Players</option>
-                <option value="11" selected>11 Players</option>
-              </select>
+              <input id="playerCountB" class="form-input" type="number" min="1" max="20" value="11" oninput="buildPlayerInputs('B')"/>
             </div>
           </div>
 
