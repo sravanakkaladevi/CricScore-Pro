@@ -34,26 +34,69 @@ const defaultState = () => ({
   inProgress: true
 });
 
-// ── Init ───────────────────────────────
+// ── Init ─────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
-  buildPlayerInputs('A'); buildPlayerInputs('B');
+  // Build player inputs ONCE on load (no onchange duplicate)
+  buildPlayerInputs('A', false);
+  buildPlayerInputs('B', false);
   const saved = localStorage.getItem('cricscore_state');
-  if (saved) { try { M = JSON.parse(saved); showScreen('scoring'); renderAll(); } catch(e) { M = defaultState(); } }
-  else { M = defaultState(); }
+  if (saved) {
+    try { M = JSON.parse(saved); showScreen('scoring'); renderAll(); }
+    catch(e) { M = defaultState(); }
+  } else {
+    M = defaultState();
+  }
 });
 
-function buildPlayerInputs(team) {
+/* buildPlayerInputs(team, sync)
+   team  = 'A' | 'B'
+   sync  = true  → also update the other team's count to match
+*/
+function buildPlayerInputs(team, sync = true) {
   const countEl = document.getElementById(`playerCount${team}`);
-  const count = countEl ? parseInt(countEl.value) : 11;
-  const el = document.getElementById(`team${team}Players`);
+  const count   = countEl ? parseInt(countEl.value) : 11;
+
+  // Sync the other team's selector to the same count
+  if (sync) {
+    const other = team === 'A' ? 'B' : 'A';
+    const otherSel = document.getElementById(`playerCount${other}`);
+    if (otherSel && otherSel.value !== String(count)) {
+      otherSel.value = count;
+      buildPlayerInputs(other, false); // rebuild other without triggering infinite loop
+    }
+  }
+
+  const el    = document.getElementById(`team${team}Players`);
   const label = document.getElementById(`team${team}PlayerLabel`);
   if (label) label.textContent = `Players (${count})`;
+
+  // Preserve existing names so rebuild doesn't erase typed names
+  const existing = {};
+  el.querySelectorAll('.player-row-wrap').forEach(row => {
+    const num  = row.dataset.idx;
+    const name = row.querySelector('.player-input')?.value || '';
+    const jersey = row.querySelector('.jersey-input')?.value || '';
+    existing[num] = { name, jersey };
+  });
+
   el.innerHTML = '';
   for (let i = 1; i <= count; i++) {
-    el.innerHTML += `<div class="player-input-row">
-      <div class="player-num">${i}</div>
-      <input class="player-input" id="p${team}${i}" type="text" placeholder="Player ${i} name"/>
-    </div>`;
+    const prev = existing[i] || {};
+    el.innerHTML += `
+      <div class="player-row-wrap player-input-row" data-idx="${i}">
+        <input class="jersey-input"
+               id="j${team}${i}"
+               type="number"
+               min="1" max="99"
+               placeholder="#"
+               value="${prev.jersey || i}"
+               title="Jersey number"/>
+        <input class="player-input"
+               id="p${team}${i}"
+               type="text"
+               placeholder="Player ${i} name"
+               value="${prev.name || ''}"/>
+      </div>`;
   }
 }
 
@@ -94,8 +137,17 @@ function startMatch() {
 
   const countA = parseInt(document.getElementById('playerCountA').value);
   const countB = parseInt(document.getElementById('playerCountB').value);
-  s.playersA = Array.from({length:countA},(_,i) => (document.getElementById(`pA${i+1}`)?.value?.trim() || `Player ${i+1}`));
-  s.playersB = Array.from({length:countB},(_,i) => (document.getElementById(`pB${i+1}`)?.value?.trim() || `Player ${i+1}`));
+  // Read name + jersey number for each player
+  s.playersA = Array.from({length:countA}, (_,i) => {
+    const name    = document.getElementById(`pA${i+1}`)?.value?.trim() || `Player ${i+1}`;
+    const jersey  = document.getElementById(`jA${i+1}`)?.value?.trim() || String(i+1);
+    return `${name} (#${jersey})`;
+  });
+  s.playersB = Array.from({length:countB}, (_,i) => {
+    const name    = document.getElementById(`pB${i+1}`)?.value?.trim() || `Player ${i+1}`;
+    const jersey  = document.getElementById(`jB${i+1}`)?.value?.trim() || String(i+1);
+    return `${name} (#${jersey})`;
+  });
 
   // Impact players
   const impactAOn = document.getElementById('impactAYes').classList.contains('toggle-active');

@@ -160,6 +160,28 @@ body > * { position: relative; z-index: 1; }
 }
 .player-input:focus { border-color: rgba(57,255,143,0.3); }
 
+/* ── Jersey number input ── */
+.jersey-input {
+  width: 46px;
+  flex-shrink: 0;
+  background: rgba(57,255,143,0.08);
+  border: 1px solid rgba(57,255,143,0.25);
+  border-radius: 8px;
+  padding: 7px 4px;
+  color: var(--neon);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+  -moz-appearance: textfield;
+}
+.jersey-input::-webkit-inner-spin-button,
+.jersey-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.jersey-input:focus { border-color: var(--neon); box-shadow: 0 0 8px rgba(57,255,143,0.2); }
+
+
 /* ── Impact Toggle ── */
 .impact-toggle-row { display: flex; flex-direction: column; }
 .toggle-btn {
