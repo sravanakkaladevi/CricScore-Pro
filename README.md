@@ -20,7 +20,9 @@
 
 ### ⚙️ Match Setup
 - Team A & Team B names with optional logo upload
-- **Variable player count** — choose 7, 8, 9, 10, or 11 players per team
+- **Custom player count** — type any number (e.g., 5, 9, 11) for your match
+- **Auto-sync teams** — changing player count for one team automatically updates the other
+- **Jersey numbers** — assign a custom number (1-99) to every player
 - Player name inputs auto-generated based on count
 - **Impact Player toggle** (Yes / No)
   - `Yes` → enter impact player name
@@ -141,6 +143,7 @@ python -m http.server 8080
 
 | Version | Changes |
 |---|---|
+| v1.3 | Custom player count input + Jersey numbers + Team count auto-sync |
 | v1.2 | Variable player count (7–11) + Impact Player Yes/No toggle |
 | v1.1 | Professional README + GitHub Pages deployment |
 | v1.0 | Full cricket scoring app — setup, live scoring, wickets, undo, innings, localStorage |
